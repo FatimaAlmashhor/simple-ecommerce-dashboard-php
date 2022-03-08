@@ -15,12 +15,18 @@
     <ul class="nav__list">
 
        <li class="nav__item">
-        <a href="dashboard.php" class="nav__link active">
+        <a href="index.php" class="nav__link active">
           <ion-icon name="home-outline" class="nav__icon"></ion-icon>
           <span class="nav__name">Dashboard</span>
         </a>
       </li>
 
+      <li class="nav__item">
+        <a href="category.php" class="nav__link active">
+          <ion-icon name="folder-outline" class="nav__icon"></ion-icon>
+          <span class="nav__name">Category</span>
+        </a>
+      </li>
       <li class="nav__item">
         <a href="products.php" class="nav__link active">
           <ion-icon name="folder-outline" class="nav__icon"></ion-icon>

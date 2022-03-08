@@ -10,10 +10,10 @@
 </head>
 <body>
 <!--______________ LEFT MAIN ______________ -->
-<?php include './components/sidebar.php';?>
+<?php include './templates/sidebar.php';?>
 <main class='main container'>
 <?php
-            include './components/dashboard.php';
+            include './templates/dashboard.php';
 ?>
 </main>
 

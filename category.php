@@ -13,50 +13,50 @@
 <?php include './templates/sidebar.php';?>
 <main class='main container'>
 <?php
-            // include './templates/products.php';
+            // include './templates/category.php';
             include './controllers/init.php';
             $do = isset($_GET['do']) ? $_GET['do'] : 'add' ;
             if($do == 'add'){
                 ?>
-                    <form action="products.php?do=add" method='post'>
-                        <input type='title' name='products' placholder='Enter products' require/>
+                    <form action="category.php?do=add" method='post'>
+                        <input type='title' name='category' placholder='Enter Category' require/>
                         <button type='submit'>Submit </button>
                     </form>
                 <?php 
-                if(isset($_POST['products'])){
-                    $sql = $con->prepare("INSERT INTO  products (products_title , is_active ) VALUES (:title , 1)");
+                if(isset($_POST['category'])){
+                    $sql = $con->prepare("INSERT INTO  category (category_title , is_active ) VALUES (:title , 1)");
 
-                    $sql->execute([':title' => $_POST['products']]);
+                    $sql->execute([':title' => $_POST['category']]);
                     $con->lastInsertId();
                 }
             }
 
             else if($do == 'delete'){
-                $sql = $con->prepare("DELETE FROM  products  WHERE products_id=:catid");
+                $sql = $con->prepare("DELETE FROM  category  WHERE category_id=:catid");
                 $sql->bindParam(":catid" , $_GET['catid']);
                 $sql->execute();
 
                 
             }else if($do == 'edit'){
                 ?>
-                    <form action="products.php?do=edit&catid=<?php echo $_GET['catid']?>" method='post'>
-                        <input type='title' name='products' placholder='Enter new products' value='<?php echo $_GET['catid']?>' require/>
+                    <form action="category.php?do=edit&catid=<?php echo $_GET['catid']?>" method='post'>
+                        <input type='title' name='category' placholder='Enter new Category' value='<?php echo $_GET['catid']?>' require/>
                         <button type='submit'>Submit </button>
                     </form>
                 <?php 
-                 if(isset($_POST['products'])){
+                 if(isset($_POST['category'])){
                    
-                    $sql = $con->prepare("UPDATE  products SET  products_title = :title WHERE products_id = :catid");
+                    $sql = $con->prepare("UPDATE  category SET  category_title = :title WHERE category_id = :catid");
                     
                     $sql->execute([ 	
-                        ":title" =>  $_POST['products'],
+                        ":title" =>  $_POST['category'],
                         ":catid" => $_GET['catid'] 
                     ]);
                 }
             }
 
             $sql = $con->prepare("SELECT * 
-                    FROM products
+                    FROM category
                    ");
 
             $sql->execute();
@@ -68,13 +68,13 @@
             foreach($rows as $row)
             {
                 echo "
-                    <div value='$row[products_title] '> $row[products_title] ";
-                echo "<a href='products.php?do=delete&catid=". $row['products_id'] ."'>Delete</a> <span>   </span>";
-                echo "<a href='products.php?do=edit&catid=". $row['products_id'] ."'>Edit</a>";
+                    <div value='$row[category_title] '> $row[category_title] ";
+                echo "<a href='category.php?do=delete&catid=". $row['category_id'] ."'>Delete</a> <span>   </span>";
+                echo "<a href='category.php?do=edit&catid=". $row['category_id'] ."'>Edit</a>";
                 echo "</div>";
             }
             echo "</div>
-             <a href='products.php?do=add'>Add new</a>
+             <a href='category.php?do=add'>Add new</a>
             ";
 
 
