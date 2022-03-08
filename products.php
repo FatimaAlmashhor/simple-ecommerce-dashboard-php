@@ -24,7 +24,7 @@
                     </form>
                 <?php 
                 if(isset($_POST['products'])){
-                    $sql = $con->prepare("INSERT INTO  products (products_title , is_active ) VALUES (:title , 1)");
+                    $sql = $con->prepare("INSERT INTO  books (book_name , is_active ) VALUES (:title , 1)");
 
                     $sql->execute([':title' => $_POST['products']]);
                     $con->lastInsertId();
@@ -32,31 +32,31 @@
             }
 
             else if($do == 'delete'){
-                $sql = $con->prepare("DELETE FROM  products  WHERE products_id=:catid");
-                $sql->bindParam(":catid" , $_GET['catid']);
+                $sql = $con->prepare("DELETE FROM  books  WHERE book_id=:bookid");
+                $sql->bindParam(":bookid" , $_GET['bookid']);
                 $sql->execute();
 
                 
             }else if($do == 'edit'){
                 ?>
-                    <form action="products.php?do=edit&catid=<?php echo $_GET['catid']?>" method='post'>
-                        <input type='title' name='products' placholder='Enter new products' value='<?php echo $_GET['catid']?>' require/>
+                    <form action="products.php?do=edit&bookid=<?php echo $_GET['bookid']?>" method='post'>
+                        <input type='title' name='products' placholder='Enter new products' value='<?php echo $_GET['bookid']?>' require/>
                         <button type='submit'>Submit </button>
                     </form>
                 <?php 
                  if(isset($_POST['products'])){
                    
-                    $sql = $con->prepare("UPDATE  products SET  products_title = :title WHERE products_id = :catid");
+                    $sql = $con->prepare("UPDATE  books SET  book_name = :title WHERE book_id = :bookid");
                     
                     $sql->execute([ 	
                         ":title" =>  $_POST['products'],
-                        ":catid" => $_GET['catid'] 
+                        ":bookid" => $_GET['bookid'] 
                     ]);
                 }
             }
 
             $sql = $con->prepare("SELECT * 
-                    FROM products
+                    FROM books
                    ");
 
             $sql->execute();
@@ -64,13 +64,13 @@
            
             echo '
             
-            <div name=categories>';
+            <div name=books>';
             foreach($rows as $row)
             {
                 echo "
-                    <div value='$row[products_title] '> $row[products_title] ";
-                echo "<a href='products.php?do=delete&catid=". $row['products_id'] ."'>Delete</a> <span>   </span>";
-                echo "<a href='products.php?do=edit&catid=". $row['products_id'] ."'>Edit</a>";
+                    <div value='$row[book_name] '> $row[book_name] ";
+                echo "<a href='products.php?do=delete&bookid=". $row['book_id'] ."'>Delete</a> <span>   </span>";
+                echo "<a href='products.php?do=edit&bookid=". $row['book_id'] ."'>Edit</a>";
                 echo "</div>";
             }
             echo "</div>
