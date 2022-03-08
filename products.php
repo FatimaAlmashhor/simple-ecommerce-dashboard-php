@@ -12,7 +12,10 @@
 <!--______________ LEFT MAIN ______________ -->
 <?php include './templates/sidebar.php';?>
 <main class='main container'>
+    <div class='page-content flex '>
+        
 <?php
+            echo "<div>";
             // include './templates/products.php';
             include './controllers/init.php';
             $do = isset($_GET['do']) ? $_GET['do'] : 'add' ;
@@ -24,7 +27,7 @@
                     </form>
                 <?php 
                 if(isset($_POST['products'])){
-                    $sql = $con->prepare("INSERT INTO  books (book_name , is_active ) VALUES (:title , 1)");
+                    $sql = $con->prepare("INSERT INTO  products (product_title , is_active ) VALUES (:title , 1)");
 
                     $sql->execute([':title' => $_POST['products']]);
                     $con->lastInsertId();
@@ -32,56 +35,59 @@
             }
 
             else if($do == 'delete'){
-                $sql = $con->prepare("DELETE FROM  books  WHERE book_id=:bookid");
-                $sql->bindParam(":bookid" , $_GET['bookid']);
+                $sql = $con->prepare("DELETE FROM  products  WHERE product_id=:productid");
+                $sql->bindParam(":productid" , $_GET['productid']);
                 $sql->execute();
 
                 
             }else if($do == 'edit'){
                 ?>
-                    <form action="products.php?do=edit&bookid=<?php echo $_GET['bookid']?>" method='post'>
-                        <input type='title' name='products' placholder='Enter new products' value='<?php echo $_GET['bookid']?>' require/>
+                <div class=''>
+                    <form action="products.php?do=edit&productid=<?php echo $_GET['productid']?>" method='post'>
+                        <input type='title' name='products' placholder='Enter new products' value='<?php echo $_GET['productid']?>' require/>
                         <button type='submit'>Submit </button>
                     </form>
+                </div>
+                   
                 <?php 
                  if(isset($_POST['products'])){
                    
-                    $sql = $con->prepare("UPDATE  books SET  book_name = :title WHERE book_id = :bookid");
+                    $sql = $con->prepare("UPDATE  products SET  product_title = :title WHERE product_id = :productid");
                     
                     $sql->execute([ 	
                         ":title" =>  $_POST['products'],
-                        ":bookid" => $_GET['bookid'] 
+                        ":productid" => $_GET['productid'] 
                     ]);
                 }
             }
-
+            echo "</div>";
             $sql = $con->prepare("SELECT * 
-                    FROM books
+                    FROM products
                    ");
 
             $sql->execute();
             $rows = $sql->fetchAll();
-           
             echo '
             
-            <div name=books>';
+            <div name=products>';
             foreach($rows as $row)
             {
                 echo "
-                    <div value='$row[book_name] '> $row[book_name] ";
-                echo "<a href='products.php?do=delete&bookid=". $row['book_id'] ."'>Delete</a> <span>   </span>";
-                echo "<a href='products.php?do=edit&bookid=". $row['book_id'] ."'>Edit</a>";
+                    <div value='$row[product_title] '> $row[product_title] ";
+                echo "<a href='products.php?do=delete&productid=". $row['product_id'] ."'>Delete</a> <span>   </span>";
+                echo "<a href='products.php?do=edit&productid=". $row['product_id'] ."'>Edit</a>";
                 echo "</div>";
             }
-            echo "</div>
-             <a href='products.php?do=add'>Add new</a>
+            echo "
+                 <a href='products.php?do=add'>Add new</a>
+             </div>
             ";
 
 
 
           
 ?>
-           
+        </div>   
 </main>
 
     <!-- ===== IONICONS ===== -->

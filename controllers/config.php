@@ -2,8 +2,8 @@
      
 
 
-    $host       = 'mysql:host=localhost;dbname=e-book'; //or localhost
-    $database   = 'shop';
+    $host       = 'mysql:host=localhost;dbname=e-commerce'; //or localhost
+    $database   = 'e-commerce';
     $port       = 8081;
     $user       = 'root';
     $password   = '';

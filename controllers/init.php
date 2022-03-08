@@ -8,7 +8,7 @@
     // $tpl  = 'include/templates/' ;  //template path
     // $lang = 'include/languages/' ;  //Lsngueges path
     // $func = 'include/functions/' ;  //Functions path 
-    // $css  = 'css/' ;         // layout css path
+    $css  = '../public/css/' ;         // layout css path
     // $js   = 'js/'  ;         //layout javascript path
     
 

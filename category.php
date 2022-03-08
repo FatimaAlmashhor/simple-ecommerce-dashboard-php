@@ -24,7 +24,7 @@
                     </form>
                 <?php 
                 if(isset($_POST['category'])){
-                    $sql = $con->prepare("INSERT INTO  category (category_title , is_active ) VALUES (:title , 1)");
+                    $sql = $con->prepare("INSERT INTO  categories (category_title , is_active ) VALUES (:title , 1)");
 
                     $sql->execute([':title' => $_POST['category']]);
                     $con->lastInsertId();
@@ -32,7 +32,7 @@
             }
 
             else if($do == 'delete'){
-                $sql = $con->prepare("DELETE FROM  category  WHERE category_id=:catid");
+                $sql = $con->prepare("DELETE FROM  categories  WHERE category_id=:catid");
                 $sql->bindParam(":catid" , $_GET['catid']);
                 $sql->execute();
 
@@ -46,7 +46,7 @@
                 <?php 
                  if(isset($_POST['category'])){
                    
-                    $sql = $con->prepare("UPDATE  category SET  category_title = :title WHERE category_id = :catid");
+                    $sql = $con->prepare("UPDATE  categories SET  category_title = :title WHERE category_id = :catid");
                     
                     $sql->execute([ 	
                         ":title" =>  $_POST['category'],
@@ -56,7 +56,7 @@
             }
 
             $sql = $con->prepare("SELECT * 
-                    FROM category
+                    FROM categories
                    ");
 
             $sql->execute();
