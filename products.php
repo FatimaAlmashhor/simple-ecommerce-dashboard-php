@@ -15,6 +15,8 @@
     <?php 
          include './controllers/init.php';
          include './templates/sidebar.php';
+         session_start();
+         $products = isset($_SESSION['products']) ? $_SESSION['products'] : []
     ?>
     
     <div class="page container">
@@ -76,6 +78,17 @@
 
              
          }else if($do == 'edit'){
+             if(isset($_GET['productid'])){
+                $productid = (isset($_GET['productid']) && is_numeric($_GET['productid']) ) ?  intval($_GET['productid']): 0;
+                $sql = $con->prepare("SELECT * 
+                FROM products WHERE product_id = :productid
+                ");
+
+                $sql->execute([
+                    ':productid' =>  $productid
+                ]);
+                $rows = $sql->fetch();
+            }
             
              ?>
              <div class="controll_section">
@@ -84,21 +97,21 @@
                     <?php echo $_GET['productid']?>
                     " method='post' enctype="multipart/form-data">
                         <label for="title">Product Title</label>
-                        <input class='input' type="title" name="title" />
+                        <input class='input' type="title" name="title" value=<?php echo $rows['product_title'] ;?> />
                         <label for="title">Product Des</label>
-                        <input class='input' type="title" name="des" />
+                        <input class='input' type="title" name="des" value=<?php echo $rows['product_des'] ;?> />
                         <div class="flex ">
                             <div>
                                 <label for="title">Product price</label>
-                                <input class='input' type="text" name="price" />
+                                <input class='input' type="text" name="price" value=<?php echo $rows['product_price'] ;?> />
                             </div>
                             <div>
                                 <label for="title">Product qty</label>
-                                <input class='input' type="number" name="qty" />
+                                <input class='input' type="number" name="qty" value=<?php echo $rows['product_qty'] ;?> />
                             </div>
                         </div>
                         <label for="title">Product image</label>
-                        <input class='input' type="file" name="image" />
+                        <input class='input' type="file" name="image" value=<?php echo $rows['product_image'] ;?> />
                         <button class='btn' type="submit">Add</button>
                     </form>
                 </div>
@@ -106,7 +119,11 @@
              <?php 
              if($_SERVER['REQUEST_METHOD'] == 'POST'){
                 $uploadImage  = new UploadFile();
-                $imageName = $uploadImage->uploadIamge('image');
+                $imageName = $rows['product_image'];
+                if(isset($_FILES['image']['name'] ) && $_FILES['image']['name'] != ''){
+                    $imageName = $uploadImage->uploadIamge('image');
+                }
+                
                 $productid = (isset($_GET['productid']) && is_numeric($_GET['productid']) ) ?  intval($_GET['productid']): 0;
                 $sql = $con->prepare("UPDATE  products SET  product_title = :title ,
                     product_des = :descr ,
