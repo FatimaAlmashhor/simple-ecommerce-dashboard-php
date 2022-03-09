@@ -1,3 +1,9 @@
+body{
+    margin-top: 4rem;
+}
+.page{
+    margin-left: 4rem;
+}
 .main{
     padding-left: 6.6rem;
     width: 100%;
@@ -16,18 +22,33 @@
 .page-content{
     flex: 2;
 }
+
 .page_warrper{
     display: grid;
-    grid-template-rows: 1fr;
-    grid-template-columns:  1fr;
-    
-    row-gap: 1rem;
+    grid-template-rows: 1fr ;
+    /* grid-template-columns: 450px  auto-fit; */
+    grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+    column-gap: 2rem;
     margin-top: 2rem;
 }
+.manage_section{
+    padding: 0px .3rem;
+}
+.items_list{
+    margin-top: 0.8rem;
+    width: inherit;
+    
+}
 .card{
-    border: 2px solid black;
+    /* border-right: 2px solid black; */
     padding: 0.3rem;
     height: fit-content;
+    transition: all 0.3s ease;
+    cursor: pointer;
+}
+.card:hover{
+    /* border: 1px solid ; */
+    
 }
 .card_warrper{
     position: relative;
@@ -36,22 +57,29 @@
     grid-template-columns:  1fr 3fr;
     grid-column: 0.6rem;
     grid-row: 0.6rem;
+    transition: all 0.3s ease;
 }
 .cart_image{
     position: relative;
-    width: 150px;
     height: auto;
+    margin: 0px 1rem;
 }
 .cart_image img{
-    position: absolute;
-    top:-18px;
-    left: -40px;
+    /* position: absolute; */
+    /* top:-18px; */
+    /* left: -40px; */
     width: 100%;
-    box-shadow: 4px 4px black;
+    box-shadow: 4px 4px #bdbdbd;
+    border: 2px solid;
 }
 
 .controll_section{
+    position: sticky;
+    top: 20px;
     padding: .4rem;
+    border-right: 2px solid black;
+    height: fit-content;
+
 }
 .form{
     width: 100%;
@@ -64,7 +92,7 @@ label{
     padding: .6rem .4rem;
     border: 2px solid black;
     margin: 0.3rem auto;
-    width: 100%;
+    width: 90%;
     border-radius: 3px;
 }
 .btn{
@@ -81,9 +109,74 @@ label{
     color: black;
     border: 0.4px solid black;
 }
-@media (min-width: 450px) {
+.ycenter-xbetween{
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+.actions{
+    height: 100%;
+}
+.add_section{
+    width: 100%;
+    display: flex;
+    justify-content: flex-end;
+}
+
+.actions > * , .add-icon{
+    font-size: 1.3rem;
+    margin: 0px .3rem;
+    padding: 0.3rem;
+    width: 22px;
+    height: 22px;
+    /* border-radius: 50%; */
+    background-color: #dbdbdb;
+    cursor: pointer;
+    box-shadow: 3px 3px ;
+    transition: all 0.3s;
+
+}
+.actions > *:hover , .add-icon:hover{
+    box-shadow: 0px 0px ;
+}
+.add-icon{
+    /* padding: .5rem; */
+    font-size:3.2rem;
+    width: 32px;
+    height: 32px;
+}
+ .delete-icon{
+     
+    background-color: rgb(248, 118, 118);
+}
+.header_title{
+    width: 100%;
+    height: fit-content ;
+    padding: 0px .8rem;
+    /* background-color: black;
+    color: white; */
+    border: 2px solid black;
+    box-shadow: 4px 4px ;
+}
+@media screen and (max-width: 550px) {
+    .card_warrper{
+        display: grid;
+        grid-template-columns: 1fr;
+        grid-template-rows:  1fr 1fr;
+        grid-column: 0.6rem;
+        grid-row: 0.6rem;
+        height: fit-content;
+    }
+    .cart_image img{
+        position: relative;
+    }
+}
+@media all and (max-width: 790px) {
     .page_warrper{
-        grid-template-columns:  2fr 1fr;
+        display: grid;
+        height: fit-content;
+        grid-template-columns:1fr;
+        grid-template-rows: 1fr 1fr;
     }
 }
 
