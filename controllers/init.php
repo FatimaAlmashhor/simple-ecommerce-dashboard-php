@@ -1,6 +1,7 @@
 <?php
 
      include 'config.php' ;
+     include 'uploadFile.php' ;
 
        // Routes
 

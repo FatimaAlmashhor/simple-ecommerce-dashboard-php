@@ -29,7 +29,7 @@
              ?>
                 <div class="controll_section">
                     <h2>Add new product</h2>
-                    <form class="form" action='products.php?do=add' method='post' >
+                    <form class="form" action='products.php?do=add' method='post' enctype="multipart/form-data" >
                         <label for="title">Product Title</label>
                         <input class='input'  type="title" name="title" />
                         <label for="title">Product Des</label>
@@ -51,6 +51,9 @@
                 </div>
              <?php 
             if(isset($_POST['title'])){
+                $uploadImage  = new UploadFile();
+                $imageName = $uploadImage->uploadIamge('image');
+
                 $sql = $con->prepare("INSERT INTO  products 
                     (product_title , product_des , product_price , product_qty ,product_image , is_active )
                      VALUES
@@ -61,7 +64,7 @@
                     ':descr' => $_POST['des'] ,
                     ':price' => $_POST['price'] ,
                     ':qty' => $_POST['qty'] ,
-                    ':images' => $_POST['image'] ,
+                    ':images' => $imageName ,
                 ]);
                 $con->lastInsertId();
             }
@@ -73,12 +76,13 @@
 
              
          }else if($do == 'edit'){
+            
              ?>
              <div class="controll_section">
                     <h2>Edit this product</h2>
                     <form class="form" action="products.php?do=edit&productid=
                     <?php echo $_GET['productid']?>
-                    " method='post' >
+                    " method='post' enctype="multipart/form-data">
                         <label for="title">Product Title</label>
                         <input class='input' type="title" name="title" />
                         <label for="title">Product Des</label>
@@ -101,8 +105,10 @@
              
              <?php 
              if($_SERVER['REQUEST_METHOD'] == 'POST'){
-                    $productid = (isset($_GET['productid']) && is_numeric($_GET['productid']) ) ?  intval($_GET['productid']): 0;
-                    $sql = $con->prepare("UPDATE  products SET  product_title = :title ,
+                $uploadImage  = new UploadFile();
+                $imageName = $uploadImage->uploadIamge('image');
+                $productid = (isset($_GET['productid']) && is_numeric($_GET['productid']) ) ?  intval($_GET['productid']): 0;
+                $sql = $con->prepare("UPDATE  products SET  product_title = :title ,
                     product_des = :descr ,
                     product_price = :price ,
                     product_qty = :qty ,
@@ -114,7 +120,7 @@
                         ":descr" =>  $_POST['des'],
                         ":price" =>  (float)$_POST['price'],
                         ":qty"   =>  (int)$_POST['qty'],
-                        ":images" =>  $_POST['image'],
+                        ":images" =>  $imageName,
                         ":productid" => $productid
                     ]);
              }
@@ -139,8 +145,17 @@
                                 <div class="card_warrper ">
                                     <div class="cart_image">
                                         <img
-                                            src="https://images.pexels.com/photos/3018845/pexels-photo-3018845.jpeg?auto=compress&cs=tinysrgb&dpr=1&w=500" />
-                                    </div>
+                                        <?php 
+                                        if($row['product_image'] == null )
+                                        echo "src='https://images.pexels.com/photos/3018845/pexels-photo-3018845.jpeg?auto=compress&cs=tinysrgb&dpr=1&w=500'";
+                                        else{
+                                            echo "src=uploads/".$row['product_image'];
+                                        }
+                                        ?>
+                                            
+                                            />
+
+                                        </div>
                                     <div>
                                         <div class="ycenter-xbetween">
                                             <h2>
