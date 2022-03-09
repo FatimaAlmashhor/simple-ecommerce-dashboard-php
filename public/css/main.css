@@ -36,7 +36,7 @@ body{
 }
 .items_list{
     margin-top: 0.8rem;
-    width: inherit;
+    width: 100%;
     
 }
 .card{
