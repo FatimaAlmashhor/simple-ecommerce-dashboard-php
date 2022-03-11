@@ -2,8 +2,8 @@
      
 
 
-    $host       = 'mysql:host=localhost;dbname=e-commerce'; //or localhost
-    $database   = 'e-commerce';
+    $host       = 'mysql:host=localhost;dbname=e-wallet'; //or localhost
+    $database   = 'e-wallet';
     $port       = 8081;
     $user       = 'root';
     $password   = '';
@@ -16,7 +16,5 @@
     }
     catch(PDOException $e)
     {
-        echo 'Failed To Connected' . $e->getMassage();
+        echo 'Failed To Connected' . $e;
     }
-
-?>

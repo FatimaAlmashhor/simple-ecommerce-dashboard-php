@@ -12,127 +12,144 @@
 </head>
 
 <body>
-    <?php 
-         include './controllers/init.php';
-         include './templates/sidebar.php';
-         session_start();
-         $products = isset($_SESSION['products']) ? $_SESSION['products'] : []
+    <?php
+    include './controllers/init.php';
+    include './templates/sidebar.php';
+    session_start();
+    $products = isset($_SESSION['products']) ? $_SESSION['products'] : []
     ?>
-    
+
     <div class="page container">
-        <a class="add_section"  href="products.php?do=add">
+        <a class="add_section" href="products.php?do=add">
             <ion-icon class='add-icon' name="add-circle-outline"></ion-icon>
         </a>
         <div class="page_warrper">
 
-        <?php 
-         $do = isset($_GET['do']) ? $_GET['do'] : 'manage' ;
-         if($do == 'add'){
-             ?>
-                <div class="controll_section">
-                    <h2>Add new product</h2>
-                    <form class="form" action='products.php?do=add' method='post' enctype="multipart/form-data" >
-                        <label for="title">Product Title</label>
-                        <input class='input'  type="title" name="title" />
-                        <label for="title">Product Des</label>
-                        <input class='input' type="title" name="des" />
-                        <div class="flex ">
-                            <div>
-                                <label for="title">Product price</label>
-                                <input class='input' type="text" name="price" />
-                            </div>
-                            <div>
-                                <label for="title">Product qty</label>
-                                <input class='input' type="number" name="qty" />
-                            </div>
+            <?php
+            $do = isset($_GET['do']) ? $_GET['do'] : 'manage';
+            $csql = $con->prepare("SELECT * 
+                FROM categories
+            ");
+
+            $csql->execute();
+            $crows = $csql->fetchAll();
+            if ($do == 'add') {
+            ?>
+            <div class="controll_section">
+                <h2>Add new product</h2>
+                <form class="form" action='products.php?do=add' method='post' enctype="multipart/form-data">
+                    <select name='categories'>
+                        <?php
+                            foreach ($crows as $category) {
+                            ?>
+                        <option value="
+                            <?php echo $category['category_id'] ?>
+                        ">
+                            <?php
+                                    echo $category['category_title'];
+                                    ?> </option>
+                        <?php
+                            }
+                            ?>
+                    </select>
+                    <label for="title">Product Title</label>
+                    <input class=' input' type="title" name="title" />
+                    <label for="title">Product Des</label>
+                    <input class='input' type="title" name="des" />
+                    <div class="flex ">
+                        <div>
+                            <label for="title">Product price</label>
+                            <input class='input' type="text" name="price" />
                         </div>
-                        <label for="title">Product image</label>
-                        <input class='input' type="file" name="image" />
-                        <button class='btn' type="submit">Add</button>
-                    </form>
-                </div>
-             <?php 
-            if(isset($_POST['title'])){
-                $uploadImage  = new UploadFile();
-                $imageName = $uploadImage->uploadIamge('image');
+                        <div>
+                            <label for="title">Product qty</label>
+                            <input class='input' type="number" name="qty" />
+                        </div>
+                    </div>
+                    <label for="title">Product image</label>
+                    <input class='input' type="file" name="image" />
+                    <button class='btn' type="submit">Add</button>
+                </form>
+            </div>
+            <?php
+                if (isset($_POST['title'])) {
+                    $uploadImage  = new UploadFile();
+                    $imageName = $uploadImage->uploadIamge('image');
 
-                $sql = $con->prepare("INSERT INTO  products 
-                    (product_title , product_des , product_price , product_qty ,product_image , is_active )
+                    $sql = $con->prepare("INSERT INTO  products 
+                    (product_title , product_des , product_price , product_qty  ,category_id,product_image ,is_active )
                      VALUES
-                      (:title ,:descr ,:price , :qty ,:images , 1)");
-
-                $sql->execute([
-                    ':title' => $_POST['title'] ,
-                    ':descr' => $_POST['des'] ,
-                    ':price' => $_POST['price'] ,
-                    ':qty' => $_POST['qty'] ,
-                    ':images' => $imageName ,
-                ]);
-                $con->lastInsertId();
-            }
-        }
-         else if($do == 'delete'){
-             $sql = $con->prepare("DELETE FROM  products  WHERE product_id=:productid");
-             $sql->bindParam(":productid" , $_GET['productid']);
-             $sql->execute();
-
-             
-         }else if($do == 'edit'){
-             if(isset($_GET['productid'])){
-                $productid = (isset($_GET['productid']) && is_numeric($_GET['productid']) ) ?  intval($_GET['productid']): 0;
-                $sql = $con->prepare("SELECT * 
+                      (:title ,:descr ,:price , :qty ,:categoryid ,:images , 1)");
+                    $sql->execute([
+                        ':title' => $_POST['title'],
+                        ':descr' => $_POST['des'],
+                        ':price' => $_POST['price'],
+                        ':qty' => $_POST['qty'],
+                        'categoryid' => $_POST['categories'],
+                        ':images' => $imageName,
+                    ]);
+                    $con->lastInsertId();
+                }
+            } else if ($do == 'delete') {
+                $sql = $con->prepare("DELETE FROM  products  WHERE product_id=:productid");
+                $sql->bindParam(":productid", $_GET['productid']);
+                $sql->execute();
+            } else if ($do == 'edit') {
+                if (isset($_GET['productid'])) {
+                    $productid = (isset($_GET['productid']) && is_numeric($_GET['productid'])) ?  intval($_GET['productid']) : 0;
+                    $sql = $con->prepare("SELECT * 
                 FROM products WHERE product_id = :productid
                 ");
 
-                $sql->execute([
-                    ':productid' =>  $productid
-                ]);
-                $rows = $sql->fetch();
-            }
-            
-             ?>
-             <div class="controll_section">
-                    <h2>Edit this product</h2>
-                    <form class="form" action="products.php?do=edit&productid=
-                    <?php echo $_GET['productid']?>
-                    " method='post' enctype="multipart/form-data">
-                        <label for="title">Product Title</label>
-                        <input class='input' type="title" name="title" value=<?php echo $rows['product_title'] ;?> />
-                        <label for="title">Product Des</label>
-                        <input class='input' type="title" name="des" value=<?php echo $rows['product_des'] ;?> />
-                        <div class="flex ">
-                            <div>
-                                <label for="title">Product price</label>
-                                <input class='input' type="text" name="price" value=<?php echo $rows['product_price'] ;?> />
-                            </div>
-                            <div>
-                                <label for="title">Product qty</label>
-                                <input class='input' type="number" name="qty" value=<?php echo $rows['product_qty'] ;?> />
-                            </div>
-                        </div>
-                        <label for="title">Product image</label>
-                        <input class='input' type="file" name="image" value=<?php echo $rows['product_image'] ;?> />
-                        <button class='btn' type="submit">Add</button>
-                    </form>
-                </div>
-             
-             <?php 
-             if($_SERVER['REQUEST_METHOD'] == 'POST'){
-                $uploadImage  = new UploadFile();
-                $imageName = $rows['product_image'];
-                if(isset($_FILES['image']['name'] ) && $_FILES['image']['name'] != ''){
-                    $imageName = $uploadImage->uploadIamge('image');
+                    $sql->execute([
+                        ':productid' =>  $productid
+                    ]);
+                    $rows = $sql->fetch();
                 }
-                
-                $productid = (isset($_GET['productid']) && is_numeric($_GET['productid']) ) ?  intval($_GET['productid']): 0;
-                $sql = $con->prepare("UPDATE  products SET  product_title = :title ,
+
+                ?>
+            <div class="controll_section">
+                <h2>Edit this product</h2>
+                <form class="form" action="products.php?do=edit&productid=
+                    <?php echo $_GET['productid'] ?>
+                    " method='post' enctype="multipart/form-data">
+                    <label for="title">Product Title</label>
+                    <input class='input' type="title" name="title" value=<?php echo $rows['product_title']; ?> />
+                    <label for="title">Product Des</label>
+                    <input class='input' type="title" name="des" value=<?php echo $rows['product_des']; ?> />
+                    <div class="flex ">
+                        <div>
+                            <label for="title">Product price</label>
+                            <input class='input' type="text" name="price" value=<?php echo $rows['product_price']; ?> />
+                        </div>
+                        <div>
+                            <label for="title">Product qty</label>
+                            <input class='input' type="number" name="qty" value=<?php echo $rows['product_qty']; ?> />
+                        </div>
+                    </div>
+                    <label for="title">Product image</label>
+                    <input class='input' type="file" name="image" value=<?php echo $rows['product_image']; ?> />
+                    <button class='btn' type="submit">Add</button>
+                </form>
+            </div>
+
+            <?php
+                if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+                    $uploadImage  = new UploadFile();
+                    $imageName = $rows['product_image'];
+                    if (isset($_FILES['image']['name']) && $_FILES['image']['name'] != '') {
+                        $imageName = $uploadImage->uploadIamge('image');
+                    }
+
+                    $productid = (isset($_GET['productid']) && is_numeric($_GET['productid'])) ?  intval($_GET['productid']) : 0;
+                    $sql = $con->prepare("UPDATE  products SET  product_title = :title ,
                     product_des = :descr ,
                     product_price = :price ,
                     product_qty = :qty ,
                     product_image = :images 
                     WHERE product_id = :productid");
-                    
-                    $sql->execute([ 	
+
+                    $sql->execute([
                         ":title" =>  $_POST['title'],
                         ":descr" =>  $_POST['des'],
                         ":price" =>  (float)$_POST['price'],
@@ -140,85 +157,87 @@
                         ":images" =>  $imageName,
                         ":productid" => $productid
                     ]);
-             }
-         }
-       ?>
+                }
+            }
+            ?>
             <div class="flex manage_section">
                 <div class="header_title">
                     <h1>Products</h1>
                 </div>
                 <div class='items_list'>
-                    <?php 
-                     $sql = $con->prepare("SELECT * 
+                    <?php
+                    $sql = $con->prepare("SELECT * 
                         FROM products
                     ");
 
                     $sql->execute();
                     $rows = $sql->fetchAll();
-                    foreach($rows as $row)
-                    {
-                        ?>
-                            <div class="card">
-                                <div class="card_warrper ">
-                                    <div class="cart_image">
-                                        <img
-                                        <?php 
-                                        if($row['product_image'] == null )
-                                        echo "src='https://images.pexels.com/photos/3018845/pexels-photo-3018845.jpeg?auto=compress&cs=tinysrgb&dpr=1&w=500'";
-                                        else{
-                                            echo "src=uploads/".$row['product_image'];
-                                        }
-                                        ?>
-                                            
-                                            />
 
-                                        </div>
-                                    <div>
-                                        <div class="ycenter-xbetween">
-                                            <h2>
-                                                <?php 
-                                                    echo $row['product_title'];
-                                                ?>
-                                            </h2>
-                                            <div class="actions">
-                                                <a href="products.php?do=edit&productid= <?php echo $row['product_id']; ?>">
-                                                    <ion-icon class="edit-icon" name="create-outline"></ion-icon>
-                                                </a>
-                                                <a class="delete-icon" href='products.php?do=delete&productid= <?php echo $row['product_id']; ?>'>
-                                                    <ion-icon name="close-circle-outline"></ion-icon>
-                                                </a>
-                                            </div>
-                                        </div>
-                                        <p> 
-                                            <?php 
-                                                echo $row['product_des'];
+
+
+
+
+                    foreach ($rows as $row) {
+                    ?>
+                    <div class="card">
+                        <div class="card_warrper ">
+                            <div class="cart_image">
+                                <img <?php
+                                            if ($row['product_image'] == null)
+                                                echo "src='https://images.pexels.com/photos/3018845/pexels-photo-3018845.jpeg?auto=compress&cs=tinysrgb&dpr=1&w=500'";
+                                            else {
+                                                echo "src=uploads/" . $row['product_image'];
+                                            }
+                                            ?> />
+
+                            </div>
+                            <div>
+                                <div class="ycenter-xbetween">
+                                    <h2>
+                                        <?php
+                                            echo $row['product_title'];
                                             ?>
-                                        </p>
-                                        <p>$
-                                        <?php 
-                                            echo $row['product_price'];
-                                        ?>
-                                        </p>
-                                        <p>Qty : 
-                                            <?php 
-                                                echo $row['product_qty'];
-                                            ?>
-                                        </p>
+                                    </h2>
+                                    <div class="actions">
+                                        <a href="products.php?do=edit&productid= <?php echo $row['product_id']; ?>">
+                                            <ion-icon class="edit-icon" name="create-outline"></ion-icon>
+                                        </a>
+                                        <a class="delete-icon"
+                                            href='products.php?do=delete&productid= <?php echo $row['product_id']; ?>'>
+                                            <ion-icon name="close-circle-outline"></ion-icon>
+                                        </a>
                                     </div>
                                 </div>
-                             </div>
-                        <?php
+                                <p>
+                                    <?php
+                                        echo $row['product_des'];
+                                        ?>
+                                </p>
+                                <p>$
+                                    <?php
+                                        echo $row['product_price'];
+                                        ?>
+                                </p>
+                                <p>Qty :
+                                    <?php
+                                        echo $row['product_qty'];
+                                        ?>
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                    <?php
                     }
                     ?>
 
-                <div>
-            </div>
-            
-        </div>
-        
-    </div>
+                    <div>
+                    </div>
 
-<script src="./public/js/main.js"></script>
+                </div>
+
+            </div>
+
+            <script src="./public/js/main.js"></script>
 </body>
 
 </html>
