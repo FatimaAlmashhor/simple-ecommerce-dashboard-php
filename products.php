@@ -14,7 +14,13 @@
 <body>
     <?php
     include './controllers/init.php';
+    include './controllers/productsController.php';
     include './templates/sidebar.php';
+
+    $productInstance = new Products();
+
+
+
     session_start();
     $products = isset($_SESSION['products']) ? $_SESSION['products'] : []
     ?>
@@ -75,11 +81,7 @@
                 if (isset($_POST['title'])) {
                     $uploadImage  = new UploadFile();
                     $imageName = $uploadImage->uploadIamge('image');
-
-                    $sql = $con->prepare("INSERT INTO  products 
-                    (product_title , product_des , product_price , product_qty  ,category_id,product_image ,is_active )
-                     VALUES
-                      (:title ,:descr ,:price , :qty ,:categoryid ,:images , 1)");
+                    $sql = $productInstance->add();
                     $sql->execute([
                         ':title' => $_POST['title'],
                         ':descr' => $_POST['des'],
@@ -88,18 +90,16 @@
                         'categoryid' => $_POST['categories'],
                         ':images' => $imageName,
                     ]);
-                    $con->lastInsertId();
+                    // $con->lastInsertId();
                 }
             } else if ($do == 'delete') {
-                $sql = $con->prepare("DELETE FROM  products  WHERE product_id=:productid");
+                $sql = $productInstance->delete();
                 $sql->bindParam(":productid", $_GET['productid']);
                 $sql->execute();
             } else if ($do == 'edit') {
                 if (isset($_GET['productid'])) {
                     $productid = (isset($_GET['productid']) && is_numeric($_GET['productid'])) ?  intval($_GET['productid']) : 0;
-                    $sql = $con->prepare("SELECT * 
-                FROM products WHERE product_id = :productid
-                ");
+                    $sql = $productInstance->update();
 
                     $sql->execute([
                         ':productid' =>  $productid
@@ -166,16 +166,10 @@
                 </div>
                 <div class='items_list'>
                     <?php
-                    $sql = $con->prepare("SELECT * 
-                        FROM products
-                    ");
 
+                    $sql = $productInstance->select();
                     $sql->execute();
                     $rows = $sql->fetchAll();
-
-
-
-
 
                     foreach ($rows as $row) {
                     ?>

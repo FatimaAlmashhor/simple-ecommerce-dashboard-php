@@ -14,7 +14,10 @@
 <body>
     <?php
     include './controllers/init.php';
+    include './controllers/categoriesController.php';
     include './templates/sidebar.php';
+
+    $categoryInstance = new Categories();
     ?>
 
     <div class="page container">
@@ -40,10 +43,7 @@
                 if (isset($_POST['title'])) {
 
 
-                    $sql = $con->prepare("INSERT INTO  categories 
-                    (category_title , is_active )
-                     VALUES
-                      (:title  , 1)");
+                    $sql = $categoryInstance->add();
 
                     $sql->execute([
                         ':title' => $_POST['title']
@@ -51,7 +51,7 @@
                     $con->lastInsertId();
                 }
             } else if ($do == 'delete') {
-                $sql = $con->prepare("DELETE FROM  categories  WHERE category_id=:categoryid");
+                $sql = $categoryInstance->delete();
                 $sql->bindParam(":categoryid", $_GET['categoryid']);
                 $sql->execute();
             } else if ($do == 'edit') {
@@ -73,9 +73,7 @@
                 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
                     $categoryid = (isset($_GET['categoryid']) && is_numeric($_GET['categoryid'])) ?  intval($_GET['categoryid']) : 0;
-                    $sql = $con->prepare("UPDATE  categories SET  category_title = :title 
-                    
-                    WHERE category_id = :categoryid");
+                    $sql = $categoryInstance->update();
 
                     $sql->execute([
                         ":title" =>  $_POST['title'],
@@ -91,9 +89,7 @@
                 </div>
                 <div class='items_list'>
                     <?php
-                    $sql = $con->prepare("SELECT * 
-                        FROM categories
-                    ");
+                    $sql = $categoryInstance->select();
 
                     $sql->execute();
                     $rows = $sql->fetchAll();
